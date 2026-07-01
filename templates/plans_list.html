@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Saved Plans</h2>
+  <p class="muted">Most recent saved plans</p>
+  {% if plans and plans|length > 0 %}
+    <ul class="clean">
+      {% for p in plans %}
+      <li style="margin:10px 0;padding:10px;border-bottom:1px dashed #1f2937;">
+        <strong>{{ p.patient_name or "Anonymous" }}</strong>
+        <div class="muted">Saved at {{ p.created_at.strftime("%Y-%m-%d %H:%M:%S") }} UTC — <a href="{{ url_for('plan_detail', plan_id=p.id) }}">View</a></div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No plans saved yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

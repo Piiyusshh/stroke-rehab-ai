@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Patient Details — {{ meta.patient_name or "Anonymous" }}</h2>
+  <p class="muted">Created at: {{ meta.created_at.strftime("%Y-%m-%d %H:%M:%S") }} UTC</p>
+
+  <!-- Patient Information -->
+  <div class="patient-info-section" style="margin-bottom: 20px;">
+    <h3>Patient Information</h3>
+    <div class="info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+      <div><strong>Age:</strong> {{ meta.age }}</div>
+      <div><strong>Sex:</strong> {{ meta.sex }}</div>
+      <div><strong>Stroke Type:</strong> {{ meta.stroke_type }}</div>
+      <div><strong>NIHSS Score:</strong> {{ meta.nihss }}</div>
+      <div><strong>Affected Side:</strong> {{ meta.affected_side }}</div>
+      <div><strong>Weeks Post Stroke:</strong> {{ meta.weeks_post_stroke }}</div>
+      {% if meta.comorbidities %}
+      <div><strong>Comorbidities:</strong> {{ meta.comorbidities }}</div>
+      {% endif %}
+      {% if meta.goals %}
+      <div><strong>Goals:</strong> {{ meta.goals }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Rehabilitation Plan -->
+  <div style="margin-top:20px">
+    <h3>Rehabilitation Plan</h3>
+    <div class="plan-display" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; max-height: 600px; overflow-y: auto;">
+      {% if plan.meta %}
+      <div class="plan-meta" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #007bff;">
+        <h4 style="color: #007bff; margin-bottom: 10px;">Plan Overview</h4>
+        <p><strong>Predicted Recovery Progress:</strong> {{ plan.meta.predicted_recovery_progress }}%</p>
+        <p><strong>Intensity Level:</strong> {{ plan.meta.intensity | title }}</p>
+        <p><strong>Sessions per Week:</strong> {{ plan.schedule.sessions_per_week }}</p>
+        <p><strong>Minutes per Session:</strong> {{ plan.schedule.minutes_per_session }}</p>
+      </div>
+      {% endif %}
+
+      {% if plan.motor_exercises %}
+      <div class="exercises-section" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #28a745;">
+        <h4 style="color: #28a745; margin-bottom: 10px;">Motor Exercises</h4>
+        <ul style="list-style-type: disc; padding-left: 20px;">
+          {% for exercise in plan.motor_exercises %}
+          <li style="margin-bottom: 10px;">
+            <strong>{{ exercise.name }}</strong><br>
+            <small style="color: #6c757d;">{{ exercise.details }}</small>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if plan.speech_exercises %}
+      <div class="exercises-section" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #17a2b8;">
+        <h4 style="color: #17a2b8; margin-bottom: 10px;">Speech Exercises</h4>
+        <ul style="list-style-type: disc; padding-left: 20px;">
+          {% for exercise in plan.speech_exercises %}
+          <li style="margin-bottom: 10px;">
+            <strong>{{ exercise.name }}</strong><br>
+            <small style="color: #6c757d;">{{ exercise.details }}</small>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if plan.cognitive_exercises %}
+      <div class="exercises-section" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #6f42c1;">
+        <h4 style="color: #6f42c1; margin-bottom: 10px;">Cognitive Exercises</h4>
+        <ul style="list-style-type: disc; padding-left: 20px;">
+          {% for exercise in plan.cognitive_exercises %}
+          <li style="margin-bottom: 10px;">
+            <strong>{{ exercise.name }}</strong><br>
+            <small style="color: #6c757d;">{{ exercise.details }}</small>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if plan.goals %}
+      <div class="goals-section" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #fd7e14;">
+        <h4 style="color: #fd7e14; margin-bottom: 10px;">Goals & KPIs</h4>
+        <ul style="list-style-type: circle; padding-left: 20px;">
+          {% for goal in plan.goals %}
+          <li style="margin-bottom: 10px;">
+            <strong>{{ goal.goal }}</strong><br>
+            <small style="color: #6c757d;">{{ goal.kpi }}</small>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if plan.lifestyle %}
+      <div class="lifestyle-section" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #20c997;">
+        <h4 style="color: #20c997; margin-bottom: 10px;">Lifestyle Recommendations</h4>
+        <ul style="list-style-type: square; padding-left: 20px;">
+          {% for rec in plan.lifestyle %}
+          <li style="margin-bottom: 5px;">{{ rec }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if plan.safety %}
+      <div class="safety-section" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #dc3545;">
+        <h4 style="color: #dc3545; margin-bottom: 10px;">Safety Notes</h4>
+        <ul style="list-style-type: square; padding-left: 20px;">
+          {% for note in plan.safety %}
+          <li style="margin-bottom: 5px;">{{ note }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if plan.follow_up %}
+      <div class="followup-section" style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #6c757d;">
+        <h4 style="color: #6c757d; margin-bottom: 10px;">Follow-up & Monitoring</h4>
+        <ul style="list-style-type: square; padding-left: 20px;">
+          {% for item in plan.follow_up %}
+          <li style="margin-bottom: 5px;">{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if plan.progression_hint %}
+      <div class="progression-section" style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107;">
+        <h4 style="color: #856404; margin-bottom: 10px;">Progression Hint</h4>
+        <p style="margin: 0; color: #856404;">{{ plan.progression_hint }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="form-actions" style="margin-top:12px">
+    <a class="button" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    <a class="button secondary" href="{{ url_for('view_progress', plan_id=meta.id) }}">View Progress</a>
+  </div>
+</section>
+{% endblock %}
+e

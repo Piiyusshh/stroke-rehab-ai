@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="progress-animation" style="width: 400px; height: 200px; margin: 0 auto 2rem;"></div>
+<h2 class="mb-4">Progress for {{ plan.patient_name }}</h2>
+
+<div class="mb-3">
+  <a href="{{ url_for('add_progress', plan_id=plan.id) }}" class="btn btn-primary">Add Progress</a>
+  <a href="{{ url_for('export_progress', plan_id=plan.id) }}" class="btn btn-secondary">Export CSV</a>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
+
+{% if view %}
+  {% if progress %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Walk Speed (m/s)</th>
+          <th>Grip Strength (kg)</th>
+          <th>Adherence (sessions)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in progress %}
+        <tr>
+          <td>{{ p.date }}</td>
+          <td>{{ p.walk_speed or 'N/A' }}</td>
+          <td>{{ p.grip_strength or 'N/A' }}</td>
+          <td>{{ p.adherence }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No progress data yet.</p>
+  {% endif %}
+{% else %}
+  <form method="POST">
+    <div class="mb-3">
+      <label for="walk_speed" class="form-label">Walk Speed (m/s)</label>
+      <input type="number" step="0.01" class="form-control" id="walk_speed" name="walk_speed">
+    </div>
+    <div class="mb-3">
+      <label for="grip_strength" class="form-label">Grip Strength (kg)</label>
+      <input type="number" step="0.01" class="form-control" id="grip_strength" name="grip_strength">
+    </div>
+    <div class="mb-3">
+      <label for="adherence" class="form-label">Adherence (sessions completed this week)</label>
+      <input type="number" class="form-control" id="adherence" name="adherence" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Progress</button>
+  </form>
+{% endif %}
+{% endblock %}

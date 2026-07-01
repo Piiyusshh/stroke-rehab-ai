@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block body_class %}no-scroll{% endblock %}
+{% block content %}
+<div id="background-gradient" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(to bottom, #e0f7fa, #b3e5fc);"></div>
+<div id="analysis-animation" style="position: fixed; bottom: 20px; right: 20px; width: 200px; height: 200px; z-index: -1; opacity: 0.3;"></div>
+<div class="dashboard-container">
+  <h1 class="dashboard-title-top" style="margin-top: 4rem; text-align: center;">Rehabilitation Dashboard</h1>
+  <div id="dashboard-animation" style="width: 400px; height: 200px; margin: 0 auto 2rem;"></div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards mb-5">
+    <div class="summary-card card-fade-in clickable-card" onclick="window.location.href='{{ url_for('create_plan') }}';">
+      <div class="card-icon">
+        <i class="fas fa-plus-circle"></i>
+      </div>
+      <div class="card-content">
+        <h3>Create New Plan</h3>
+        <p>Start a new rehabilitation plan</p>
+        <small class="card-link">Click to create</small>
+      </div>
+    </div>
+    <div class="summary-card card-fade-in clickable-card" onclick="$('#patientModal').modal('show');">
+      <div class="card-icon">
+        <i class="fas fa-folder-open"></i>
+      </div>
+      <div class="card-content">
+        <h3>{{ plans|length if plans else 0 }}</h3>
+        <p>Patient Records</p>
+        <small class="card-link">Click to view all records</small>
+      </div>
+    </div>
+  </div>
+
+
+
+  {% if not plans %}
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-clipboard-list"></i>
+      </div>
+      <h3>Welcome to CureNet AI</h3>
+      <p>You haven't created any rehabilitation plans yet. Start by creating your first plan to help patients on their recovery journey.</p>
+      <a href="{{ url_for('create_plan') }}" class="btn btn-primary btn-lg">
+        <i class="fas fa-plus-circle me-2"></i>Create Your First Plan
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Patient Records Modal -->
+<div class="modal fade" id="patientModal" tabindex="-1" role="dialog" aria-labelledby="patientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="patientModalLabel">
+          <i class="fas fa-users me-2"></i>Patient Records
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+        {% if plans %}
+          <div class="patient-cards-grid">
+            {% for plan in plans %}
+            <div class="patient-card">
+              <div class="card-header">
+                <div class="patient-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="patient-info">
+                  <h4>Plan #{{ plan.id }}</h4>
+                  <p class="patient-name">{{ plan.patient_name|truncate(20, true, '...') }}</p>
+                  <span class="creation-date">{{ plan.created_at.strftime('%b %d, %Y') }}</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="patient-details">
+                  <div class="detail-item">
+                    <i class="fas fa-birthday-cake"></i>
+                    <span>{{ plan.age }} years</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="fas fa-brain"></i>
+                    <span>{{ plan.stroke_type }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ plan.weeks_post_stroke }} weeks post-stroke</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-actions">
+                <a href="{{ url_for('view_plan', plan_id=plan.id) }}" class="btn btn-outline-primary btn-sm">
+                  <i class="fas fa-eye me-1"></i>View Plan
+                </a>
+                <a href="{{ url_for('view_progress', plan_id=plan.id) }}" class="btn btn-outline-info btn-sm">
+                  <i class="fas fa-chart-line me-1"></i>Progress
+                </a>
+                <a href="{{ url_for('generate_report', plan_id=plan.id) }}" class="btn btn-outline-success btn-sm">
+                  <i class="fas fa-file-pdf me-1"></i>Report
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>No patient records available.</p>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

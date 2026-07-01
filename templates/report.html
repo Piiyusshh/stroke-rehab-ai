@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Report for {{ plan.patient_name }}</h2>
+
+<div class="mb-3">
+  <a href="{{ url_for('generate_report', plan_id=plan.id) }}" class="btn btn-primary">Download PDF Report</a>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5>Plan Summary</h5>
+  </div>
+  <div class="card-body">
+    <p><strong>Patient:</strong> {{ plan.patient_name }}</p>
+    <p><strong>Age:</strong> {{ plan.age }}, <strong>Sex:</strong> {{ plan.sex }}</p>
+    <p><strong>Stroke Type:</strong> {{ plan.stroke_type }}, <strong>NIHSS:</strong> {{ plan.nihss }}</p>
+    <p><strong>Affected Side:</strong> {{ plan.affected_side }}, <strong>Weeks Post Stroke:</strong> {{ plan.weeks_post_stroke }}</p>
+    <p><strong>Predicted Recovery Progress:</strong> {{ plan_data.meta.predicted_recovery_progress }}%</p>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-header">
+    <h5>Progress History</h5>
+  </div>
+  <div class="card-body">
+    {% if progress %}
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Walk Speed (m/s)</th>
+            <th>Grip Strength (kg)</th>
+            <th>Adherence</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in progress %}
+          <tr>
+            <td>{{ p.date }}</td>
+            <td>{{ p.walk_speed or 'N/A' }}</td>
+            <td>{{ p.grip_strength or 'N/A' }}</td>
+            <td>{{ p.adherence }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No progress data available.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

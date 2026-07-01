@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Create Rehabilitation Plan</h2>
+<form method="post" action="{{ url_for('plan') }}">
+    <label>Patient Name:</label>
+    <input type="text" name="patient_name" required><br>
+
+    <label>Age:</label>
+    <input type="number" name="age" required><br>
+
+    <label>Sex:</label>
+    <select name="sex">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+    </select><br>
+
+    <label>Stroke Type:</label>
+    <select name="stroke_type">
+        <option value="Ischemic">Ischemic</option>
+        <option value="Hemorrhagic">Hemorrhagic</option>
+    </select><br>
+
+    <label>NIHSS Score:</label>
+    <input type="number" name="nihss" required><br>
+
+    <label>Affected Side:</label>
+    <select name="affected_side">
+        <option value="Left">Left</option>
+        <option value="Right">Right</option>
+    </select><br>
+
+    <label>Weeks Post Stroke:</label>
+    <input type="number" name="weeks_post_stroke" required><br>
+
+    <label>Comorbidities:</label><br>
+    <input type="checkbox" name="comorbidities" value="Diabetes"> Diabetes<br>
+    <input type="checkbox" name="comorbidities" value="Hypertension"> Hypertension<br>
+    <input type="checkbox" name="comorbidities" value="Heart Disease"> Heart Disease<br>
+
+    <label>Goals:</label><br>
+    <input type="checkbox" name="goals" value="Walking"> Walking<br>
+    <input type="checkbox" name="goals" value="Arm Function"> Arm Function<br>
+    <input type="checkbox" name="goals" value="Speech"> Speech<br>
+
+    <button type="submit">Generate Plan</button>
+</form>
+{% endblock %}

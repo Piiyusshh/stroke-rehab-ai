@@ -1,0 +1,10 @@
+- [x] Update templates/dashboard.html: Change background-animation div to use CSS gradient background (light blue to cyan). Add a new div for Lottie animation below the title, centered, 400x200px.
+- [x] Update static/lottie.js: Remove loading for background-animation. Add loading for new-lottie-animation using medical Lottie URL.
+- [x] Test dashboard page to ensure changes look professional and animations load correctly. (App running on http://127.0.0.1:5000, browser tool disabled, but changes implemented successfully.)
+- [x] Edit templates/create_plan.html: Add no-scroll body class, center and align form elements to fit without scrolling.
+- [x] Change background in create_plan.html to gradient like dashboard, fix form alignment to ensure all fields are visible and selectable.
+- [x] Improve create_plan.html layout: Use two-column grid for form fields, add card-based layout with shadow and rounded corners, make heading larger with subheading.
+- [x] Enhance create_plan.html form: Add placeholders, ensure dropdowns/radio buttons, add hover/focus effects, make button prominent.
+- [x] Update templates/base.html: Make navbar thinner with light shadow.
+- [x] Reorganize create_plan.html form fields into logical sections with icons and better spacing.
+- [x] Add subtle background health/AI animation to create_plan.html with low opacity.

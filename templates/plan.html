@@ -1,0 +1,520 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Background Animation -->
+<div id="background-animation" class="background-animation"></div>
+
+<div class="container-fluid medical-report">
+  <!-- Report Header -->
+  <div class="row">
+    <div class="col-12">
+      <div class="report-header">
+        <div class="header-content">
+          <div class="hospital-info">
+            <h1 class="report-title">Stroke Rehabilitation Program</h1>
+            <p class="subtitle">Personalized Treatment Protocol</p>
+          </div>
+          <div class="patient-info">
+            <h3>Patient Information</h3>
+            <p><strong>Name:</strong> {{ patient_name }}</p>
+            <p><strong>Report Date:</strong> {{ plan.meta.generated_at[:10] if plan.meta.generated_at else 'Today' }}</p>
+            <p><strong>Medical Record:</strong> STR-{{ plan.meta.generated_at[:10].replace('-', '') if plan.meta.generated_at else '0001' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Clinical Assessment -->
+  <div class="row">
+    <div class="col-12">
+      <div class="report-section">
+        <h3 class="section-title">Clinical Assessment & Rehabilitation Plan</h3>
+        <div class="assessment-content">
+          {% if plan %}
+            {% for section, details in plan.items() %}
+              {% if section not in ['meta', 'Progression_hint', 'Safety', 'Goals'] %}
+                <div class="clinical-section">
+                  <h4 class="subsection-title">{{ section | capitalize }}</h4>
+                  {% if details is mapping %}
+                    <div class="clinical-details">
+                      {% for k, v in details.items() %}
+                        <div class="detail-item">
+                          <span class="detail-label">{{ k | capitalize }}:</span>
+                          <span class="detail-value">{{ v }}</span>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  {% elif details is iterable and details is not string %}
+                    {% if section.lower() == 'motor exercises' %}
+                      <div class="exercise-table">
+                        <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th>Exercise Name</th>
+                              <th>Frequency</th>
+                              <th>Duration</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for item in details %}
+                              <tr>
+                                <td>{{ item.split(' - ')[0] if ' - ' in item else item }}</td>
+                                <td>3x/week</td>
+                                <td>15-20 min</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    {% else %}
+                      <ul class="clinical-list">
+                        {% for item in details %}
+                          <li>{{ item }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  {% else %}
+                    <p class="clinical-note">{{ details }}</p>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <p class="no-data">No clinical data available.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Monitoring -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="report-section">
+        <h4 class="subsection-title">Exercise Distribution Analysis</h4>
+        <div class="chart-container">
+          <canvas id="exerciseChart" width="400" height="250"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="report-section">
+        <h4 class="subsection-title">Projected Recovery Trajectory</h4>
+        <div class="chart-container">
+          <canvas id="recoveryChart" width="400" height="250"></canvas>
+        </div>
+        <div class="clinical-recommendation">
+          <p><strong>Clinical Recommendation:</strong> Consistent adherence to this rehabilitation protocol is essential for optimal recovery outcomes. Regular monitoring and adjustment of the plan will be conducted based on patient progress.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="row">
+    <div class="col-12">
+      <div class="report-footer">
+        <p>This rehabilitation plan has been developed based on current clinical guidelines and patient-specific assessment. Individual results may vary.</p>
+        <div class="signature-section">
+          <div class="signature">
+            <p>_______________________________</p>
+            <p>Rehabilitation Specialist</p>
+          </div>
+          <div class="date">
+            <p>Date: {{ plan.meta.generated_at[:10] if plan.meta.generated_at else 'Today' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='lottie.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Lottie Animation for Background
+    const animationContainer = document.getElementById('background-animation');
+    const animationData = {
+      "v": "5.7.1",
+      "meta": {
+        "g": "LottieFiles AE 0.1.20"
+      },
+      "fr": 29.9700012207031,
+      "ip": 0,
+      "op": 120.000004889755,
+      "w": 1920,
+      "h": 1080,
+      "nm": "Medical Background",
+      "ddd": 0,
+      "assets": [],
+      "layers": [
+        {
+          "ddd": 0,
+          "ind": 1,
+          "ty": 4,
+          "nm": "Medical Icons",
+          "sr": 1,
+          "ks": {
+            "o": {
+              "a": 0,
+              "k": 10,
+              "ix": 11
+            },
+            "r": {
+              "a": 0,
+              "k": 0,
+              "ix": 10
+            },
+            "p": {
+              "a": 0,
+              "k": [960, 540, 0],
+              "ix": 2
+            },
+            "a": {
+              "a": 0,
+              "k": [0, 0, 0],
+              "ix": 1
+            },
+            "s": {
+              "a": 0,
+              "k": [100, 100, 100],
+              "ix": 6
+            }
+          },
+          "ao": 0,
+          "shapes": [
+            {
+              "ty": "gr",
+              "it": [
+                {
+                  "d": 1,
+                  "ty": "el",
+                  "s": {
+                    "a": 0,
+                    "k": [20, 20],
+                    "ix": 2
+                  },
+                  "p": {
+                    "a": 0,
+                    "k": [0, 0],
+                    "ix": 3
+                  }
+                },
+                {
+                  "ty": "st",
+                  "c": {
+                    "a": 0,
+                    "k": [0.2, 0.4, 0.8, 0.3],
+                    "ix": 3
+                  },
+                  "o": {
+                    "a": 0,
+                    "k": 100,
+                    "ix": 4
+                  },
+                  "w": {
+                    "a": 0,
+                    "k": 2,
+                    "ix": 5
+                  },
+                  "lc": 1,
+                  "lj": 1,
+                  "ml": 4,
+                  "bm": 0,
+                  "nm": "Stroke",
+                  "mn": "ADBE Vector Graphic - Stroke",
+                  "hd": false
+                },
+                {
+                  "ty": "tr",
+                  "p": {
+                    "a": 0,
+                    "k": [200, 200],
+                    "ix": 2
+                  },
+                  "a": {
+                    "a": 0,
+                    "k": [0, 0],
+                    "ix": 1
+                  },
+                  "s": {
+                    "a": 0,
+                    "k": [100, 100],
+                    "ix": 3
+                  },
+                  "r": {
+                    "a": 0,
+                    "k": 0,
+                    "ix": 6
+                  },
+                  "o": {
+                    "a": 0,
+                    "k": 100,
+                    "ix": 7
+                  },
+                  "sk": {
+                    "a": 0,
+                    "k": 0,
+                    "ix": 4
+                  },
+                  "sa": {
+                    "a": 0,
+                    "k": 0,
+                    "ix": 5
+                  },
+                  "nm": "Transform"
+                }
+              ],
+              "nm": "Medical Icon 1",
+              "np": 2,
+              "cix": 2,
+              "bm": 0,
+              "ix": 1,
+              "mn": "ADBE Vector Group",
+              "hd": false
+            },
+            {
+              "ty": "gr",
+              "it": [
+                {
+                  "ind": 0,
+                  "ty": "sh",
+                  "ix": 1,
+                  "ks": {
+                    "a": 0,
+                    "k": {
+                      "i": [[0, 0], [0, 0], [0, 0]],
+                      "o": [[0, 0], [0, 0], [0, 0]],
+                      "v": [[-10, -10], [10, -10], [0, 10]],
+                      "c": true
+                    },
+                    "ix": 2
+                  },
+                  "nm": "Path 1",
+                  "mn": "ADBE Vector Shape - Group",
+                  "hd": false
+                },
+                {
+                  "ty": "fl",
+                  "c": {
+                    "a": 0,
+                    "k": [0.2, 0.6, 0.4, 0.2],
+                    "ix": 4
+                  },
+                  "o": {
+                    "a": 0,
+                    "k": 100,
+                    "ix": 5
+                  },
+                  "r": 1,
+                  "bm": 0,
+                  "nm": "Fill 1",
+                  "mn": "ADBE Vector Graphic - Fill",
+                  "hd": false
+                },
+                {
+                  "ty": "tr",
+                  "p": {
+                    "a": 0,
+                    "k": [400, 300],
+                    "ix": 2
+                  },
+                  "a": {
+                    "a": 0,
+                    "k": [0, 0],
+                    "ix": 1
+                  },
+                  "s": {
+                    "a": 0,
+                    "k": [100, 100],
+                    "ix": 3
+                  },
+                  "r": {
+                    "a": 0,
+                    "k": 0,
+                    "ix": 6
+                  },
+                  "o": {
+                    "a": 0,
+                    "k": 100,
+                    "ix": 7
+                  },
+                  "sk": {
+                    "a": 0,
+                    "k": 0,
+                    "ix": 4
+                  },
+                  "sa": {
+                    "a": 0,
+                    "k": 0,
+                    "ix": 5
+                  },
+                  "nm": "Transform"
+                }
+              ],
+              "nm": "Medical Icon 2",
+              "np": 2,
+              "cix": 2,
+              "bm": 0,
+              "ix": 2,
+              "mn": "ADBE Vector Group",
+              "hd": false
+            }
+          ],
+          "ip": 0,
+          "op": 120.000004889755,
+          "st": 0,
+          "bm": 0
+        }
+      ],
+      "markers": []
+    };
+
+    const anim = lottie.loadAnimation({
+      container: animationContainer,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: animationData
+    });
+
+    // Adjust animation size and position
+    animationContainer.style.position = 'fixed';
+    animationContainer.style.top = '0';
+    animationContainer.style.left = '0';
+    animationContainer.style.width = '100%';
+    animationContainer.style.height = '100%';
+    animationContainer.style.zIndex = '-1';
+    animationContainer.style.opacity = '0.1';
+    animationContainer.style.pointerEvents = 'none';
+    // Get data from template variables safely
+    var sessionsPerWeek = parseInt("{{ plan.schedule.sessions_per_week | default(5) }}") || 5;
+    var predictedProgress = parseFloat("{{ plan.meta.predicted_recovery_progress | default(60) }}") || 60;
+    var weeksPostStroke = parseInt("{{ plan.meta.weeks_post_stroke | default(4) }}") || 4;
+
+    // Exercise Distribution Chart
+    const exerciseCtx = document.getElementById('exerciseChart').getContext('2d');
+    const exerciseData = {
+      labels: ['Motor Exercises', 'Speech Exercises', 'Cognitive Exercises'],
+      datasets: [{
+        label: 'Weekly Sessions',
+        data: [sessionsPerWeek, 2, 2], // Motor: full sessions, Speech/Cognitive: 2 each
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(255, 205, 86, 0.8)'
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 205, 86, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    new Chart(exerciseCtx, {
+      type: 'bar',
+      data: exerciseData,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.label}: ${context.parsed.y} sessions/week`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Sessions per Week'
+            }
+          }
+        }
+      }
+    });
+
+    // Recovery Progress Chart
+    const recoveryCtx = document.getElementById('recoveryChart').getContext('2d');
+    const totalWeeks = 52; // 1 year projection
+
+    // Generate data points: current progress + linear projection
+    const labels = [];
+    const dataPoints = [];
+    for (let w = 0; w <= totalWeeks; w += 4) {
+      labels.push(`Week ${w}`);
+      if (w <= weeksPostStroke) {
+        dataPoints.push(predictedProgress * (w / weeksPostStroke));
+      } else {
+        // Simple linear projection
+        const remainingProgress = 100 - predictedProgress;
+        const remainingWeeks = totalWeeks - weeksPostStroke;
+        const slope = remainingProgress / remainingWeeks;
+        dataPoints.push(predictedProgress + slope * (w - weeksPostStroke));
+      }
+    }
+
+    new Chart(recoveryCtx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Predicted Recovery Progress (%)',
+          data: dataPoints,
+          borderColor: '#28a745',
+          backgroundColor: 'rgba(40, 167, 69, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Progress: ${context.parsed.y.toFixed(1)}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Weeks Post Stroke'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Recovery Progress (%)'
+            },
+            min: 0,
+            max: 100
+          }
+        }
+      }
+    });
+  });
+</script>
+
+<div class="mt-3">
+  <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}
